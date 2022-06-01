@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import AppContainer from './components/AppContainer/index.vue'
+import AppAvatar from './components/AppAvatar/index.vue'
 
 const user = useUserStore()
 </script>
@@ -16,9 +17,7 @@ const user = useUserStore()
       <div class="flex w-fit">
         <div v-if="user.hasUser" class="flex items-center gap-4">
           <h2 class="font-primary">{{ user.name }}</h2>
-          <div class="w-10 h-10 rounded-full overflow-hidden">
-            <img :src="user.photoURL ?? undefined" alt="user photo" />
-          </div>
+          <AppAvatar :url="user.photoURL" />
         </div>
       </div>
     </header>
