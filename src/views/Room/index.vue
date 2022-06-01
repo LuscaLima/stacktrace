@@ -97,7 +97,10 @@ function getRoomQuestions() {
   questions.added(
     data => {
       if (data.key) {
-        state.questions[data.key] = data.val()
+        state.questions = {
+          [data.key]: data.val(),
+          ...state.questions
+        }
       }
     },
     [String(route.params.id)]
@@ -150,7 +153,7 @@ onMounted(() => {
           <template #icon>
             <PhX />
           </template>
-          cancel
+          close
         </AppButton>
         <AppButton :disabled="isSendDisabled">
           <template #icon>
