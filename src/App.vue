@@ -6,7 +6,7 @@ const user = useUserStore()
 </script>
 
 <template>
-  <div class="w-screen min-h-screen bg-slate-50">
+  <div class="w-full min-h-screen bg-slate-50">
     <header
       class="flex justify-between items-center px-16 h-14 border-b-[1px] border-slate-300"
     >

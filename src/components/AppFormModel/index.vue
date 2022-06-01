@@ -17,8 +17,8 @@ withDefaults(
     >
       <slot />
     </div>
-    <footer class="flex justify-end gap-4">
-      <div>
+    <footer class="flex justify-end">
+      <div class="flex gap-4">
         <slot name="footer" />
       </div>
     </footer>
