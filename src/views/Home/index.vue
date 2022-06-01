@@ -18,12 +18,12 @@
         answer
       </span>
     </h2>
-    <h3 class="font-secondary text-xl text-center text-slate-500">
+    <h3 class="text-xl text-center text-slate-500">
       learn and share knowledge with others
     </h3>
   </div>
   <main
-    class="flex flex-col h-[28rem] p-6 font-secondary text-slate-700 rounded-md bg-slate-100"
+    class="flex flex-col h-[28rem] p-6 text-slate-700 rounded-md bg-slate-100"
   >
     <router-view />
   </main>

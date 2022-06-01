@@ -46,7 +46,7 @@ const formatedCode = computed(() => props.code.replace('-', '#'))
       </span>
     </header>
     <div class="w-full mt-1">
-      <p class="font-secondary text-sm text-slate-500">
+      <p class="text-sm text-slate-500">
         {{ description }}
       </p>
     </div>

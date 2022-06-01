@@ -53,7 +53,7 @@ const selectedOption = computed<optionType>(
       </div>
       <div class="relative">
         <ListboxButton
-          class="relative inline-flex w-full px-3 py-2 font-primary border-[1px] text-slate-700 border-slate-300 rounded bg-white outline-0 placeholder:text-slate-300 focus:border-brand-primary-500 focus-visible:border-brand-primary-500 transition-all duration-200"
+          class="relative inline-flex w-full px-3 py-2 border-[1px] text-slate-700 border-slate-300 rounded bg-white outline-0 placeholder:text-slate-300 focus:border-brand-primary-500 focus-visible:border-brand-primary-500 transition-all duration-200"
         >
           <span
             class="block truncate"

@@ -114,7 +114,7 @@ onMounted(() => {
           {{ quantityOfQuestions }} questions
         </AppTag>
       </div>
-      <p class="font-secondary text-lg">{{ state.room.description }}</p>
+      <p class="text-lg">{{ state.room.description }}</p>
     </div>
   </header>
   <div class="flex p-4 bg-white rounded shadow-sm">

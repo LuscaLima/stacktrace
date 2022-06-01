@@ -11,7 +11,7 @@ const { copy } = useClipboard({ source: props.text })
   <div
     class="flex justify-between items-center w-fit px-4 py-2 border-[1px] border-slate-300 rounded bg-white"
   >
-    <strong class="font-secondary font-semibold mr-2">
+    <strong class="font-semibold mr-2">
       {{ text }}
     </strong>
     <div

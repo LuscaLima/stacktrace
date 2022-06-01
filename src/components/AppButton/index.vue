@@ -44,7 +44,7 @@ const hasLabel = computed(() => slots.default && slots.default()[0].children) //
 
 <style>
 .btn {
-  @apply inline-flex justify-center items-center gap-3 w-full px-3 py-2 font-primary text-gray-50 text-center rounded transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed;
+  @apply inline-flex justify-center items-center gap-3 w-full px-3 py-2 uppercase text-gray-50 text-center rounded transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed;
 }
 
 .btn-primary {

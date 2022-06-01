@@ -3,8 +3,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        primary: ['Poppins', 'sans-serif'],
-        secondary: ['"Open Sans"', 'sans-serif']
+        primary: ['Poppins', 'sans-serif']
       },
       colors: {
         brand: {
