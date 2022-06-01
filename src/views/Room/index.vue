@@ -4,7 +4,13 @@ import { useRoute } from 'vue-router'
 import { database } from '@/services/firebase'
 import { useDatabase } from '@/hooks'
 import { useUserStore } from '@/stores/user'
-import { PhPaperPlaneTilt, PhQuestion } from 'phosphor-vue'
+import {
+  PhList,
+  PhPaperPlaneTilt,
+  PhPencilSimpleLine,
+  PhQuestion,
+  PhX
+} from 'phosphor-vue'
 import { getJoinRoomCategory } from '@/composables/categories'
 import { login } from '@/composables/login'
 import AppCopyPaste from '@/components/AppCopyPaste/index.vue'
@@ -29,6 +35,7 @@ const user = useUserStore()
 const state = reactive({
   room: {} as Room,
   questions: {} as Question,
+  isAsking: false,
   question: {
     title: '',
     content: ''
@@ -40,6 +47,11 @@ const isSendDisabled = computed(
 )
 const quantityOfQuestions = computed(() => Object.keys(state.questions).length)
 const hasQuestions = computed(() => !!quantityOfQuestions.value)
+
+function toggleAsking() {
+  resetQuestion()
+  state.isAsking = !state.isAsking
+}
 
 async function handleSend() {
   if (!state.question.content) {
@@ -99,7 +111,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <header class="flex items-center flex-wrap py-8">
+  <header class="flex items-center flex-wrap py-8 text-slate-700">
     <div class="flex justify-between w-full mb-4">
       <h1 class="font-primary text-4xl font-bold">{{ state.room.name }}</h1>
       <AppCopyPaste text="some" />
@@ -117,7 +129,10 @@ onMounted(() => {
       <p class="text-lg">{{ state.room.description }}</p>
     </div>
   </header>
-  <div class="flex p-4 bg-white rounded shadow-sm">
+  <div
+    v-if="state.isAsking"
+    class="flex p-4 border-2 border-brand-primary-500 bg-white rounded"
+  >
     <AppFormModel fileds-placement="vertical" @submit.prevent="handleSend">
       <AppInput
         v-model="state.question.title"
@@ -131,6 +146,12 @@ onMounted(() => {
         height="8rem"
       />
       <template #footer>
+        <AppButton type="clear" @click="toggleAsking">
+          <template #icon>
+            <PhX />
+          </template>
+          cancel
+        </AppButton>
         <AppButton :disabled="isSendDisabled">
           <template #icon>
             <PhPaperPlaneTilt />
@@ -139,6 +160,16 @@ onMounted(() => {
         </AppButton>
       </template>
     </AppFormModel>
+  </div>
+  <div v-else class="flex justify-end">
+    <div>
+      <AppButton @click="toggleAsking">
+        <template #icon>
+          <PhPencilSimpleLine />
+        </template>
+        ask a question
+      </AppButton>
+    </div>
   </div>
   <div class="flex">
     <div v-if="!hasQuestions" class="flex-1 flex flex-col items-center py-8">
@@ -153,6 +184,10 @@ onMounted(() => {
       </p>
     </div>
     <div v-else class="flex-1 flex flex-col gap-4 py-4">
+      <div class="flex gap-2 items-center my-2 text-base uppercase">
+        <PhList />
+        <h3 class="text-slate-700">questions in this room</h3>
+      </div>
       <AppQuestion v-for="question in state.questions" v-bind="question" />
     </div>
   </div>

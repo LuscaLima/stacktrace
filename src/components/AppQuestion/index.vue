@@ -25,7 +25,7 @@ defineProps<QuestionData>()
     <header class="w-full">
       <router-link
         to="#"
-        class="text-lg text-brand-primary-600 hover:text-brand-primary-400"
+        class="text-lg font-semibold text-brand-primary-500 hover:brightness-150"
       >
         {{ title }}
       </router-link>
