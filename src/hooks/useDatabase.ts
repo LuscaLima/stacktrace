@@ -32,8 +32,8 @@ export default function useDatabase(
     return _ref(database, join([document, ...path]))
   }
 
-  function get(path?: string[]) {
-    return _get(child(rootReference, join(path ?? ['/'])))
+  function get(path: string[] = ['/']) {
+    return _get(child(rootReference, join(path)))
   }
 
   function push(value: any, path: string[] = []) {
