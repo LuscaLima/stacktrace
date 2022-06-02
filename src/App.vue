@@ -19,12 +19,16 @@ onMounted(() => {
     <header
       class="flex justify-between items-center px-16 h-14 border-b-[1px] border-slate-300"
     >
-      <div>
-        <h1 class="font-primary">StackTrace</h1>
+      <div class="w-48">
+        <router-link :to="{ name: 'home' }">
+          <img src="@/assets/img/logo.svg" alt="StackTrace logo" />
+        </router-link>
       </div>
       <div class="flex w-fit">
         <div v-if="user.hasUser" class="flex items-center gap-4">
-          <h2 class="font-primary">{{ user.name }}</h2>
+          <h2 class="font-primary font-medium">
+            {{ user.name }}
+          </h2>
           <AppAvatar :url="user.photoURL" />
         </div>
       </div>
