@@ -2,14 +2,15 @@
 import { computed, onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { database } from '@/services/firebase'
-import { useDatabase } from '@/hooks'
+import { useDatabase, useModal } from '@/hooks'
 import { useUserStore } from '@/stores/user'
 import {
   PhList,
   PhPaperPlaneTilt,
   PhPencilSimpleLine,
   PhQuestion,
-  PhX
+  PhX,
+  PhXCircle
 } from 'phosphor-vue'
 import { getJoinRoomCategory } from '@/composables/categories'
 import { login } from '@/composables/login'
@@ -19,6 +20,7 @@ import AppInput from '@/components/AppInput/index.vue'
 import AppInputText from '@/components/AppInputText/index.vue'
 import AppButton from '@/components/AppButton/index.vue'
 import AppTag from '@/components/AppTag/index.vue'
+import AppAlert from '@/components/AppAlert/index.vue'
 import AppQuestion, { type Question } from '@/components/AppQuestion/index.vue'
 
 type Room = {
@@ -26,12 +28,14 @@ type Room = {
   name: string
   category: string
   description: string
+  isInactive?: boolean
 }
 
 const route = useRoute()
 const room = useDatabase(database, `rooms/${route.params.id}`)
 const questions = useDatabase(database, 'questions')
 const user = useUserStore()
+const modal = useModal()
 const state = reactive({
   room: {} as Room,
   questions: {} as Question,
@@ -47,8 +51,26 @@ const isSendDisabled = computed(
 )
 const quantityOfQuestions = computed(() => Object.keys(state.questions).length)
 const hasQuestions = computed(() => !!quantityOfQuestions.value)
+const hasCloseRoomButton = computed(
+  () => state.room.authorId === user.uid && !state.room.isInactive
+)
 
-function toggleAsking() {
+function handleCloseRoom() {
+  modal.open({
+    type: 'warn',
+    title: 'Close room',
+    content:
+      'Do you really want to close this room? This action cannot be undone',
+    okHandler: () => {
+      room.update({ isInactive: true }).then(() => {
+        modal.close()
+        state.room.isInactive = true
+      })
+    }
+  })
+}
+
+function handleToggleAsking() {
   resetQuestion()
   state.isAsking = !state.isAsking
 }
@@ -114,12 +136,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <header class="flex items-center flex-wrap py-8 text-slate-700">
-    <div class="flex justify-between w-full mb-4">
-      <h1 class="font-primary text-4xl font-bold">{{ state.room.name }}</h1>
-      <AppCopyPaste text="some" />
-    </div>
-    <div>
+  <header class="flex items-start flex-wrap py-8 text-slate-700">
+    <div class="flex-1">
+      <div class="flex justify-between w-full mb-4">
+        <h1 class="font-primary text-4xl font-bold">{{ state.room.name }}</h1>
+      </div>
       <div class="flex gap-2">
         <AppTag>{{ getJoinRoomCategory(state.room.category) }}</AppTag>
         <AppTag type="clear">
@@ -131,49 +152,70 @@ onMounted(() => {
       </div>
       <p class="text-lg">{{ state.room.description }}</p>
     </div>
-  </header>
-  <div
-    v-if="state.isAsking"
-    class="flex p-4 border-2 border-brand-primary-500 bg-white rounded"
-  >
-    <AppFormModel fileds-placement="vertical" @submit.prevent="handleSend">
-      <AppInput
-        v-model="state.question.title"
-        label="title"
-        placeholder="be clear and concise"
-      />
-      <AppInputText
-        v-model="state.question.content"
-        label="content"
-        placeholder="what do you want to ask?"
-        height="8rem"
-      />
-      <template #footer>
-        <AppButton type="clear" @click="toggleAsking">
-          <template #icon>
-            <PhX />
-          </template>
-          close
-        </AppButton>
-        <AppButton :disabled="isSendDisabled">
-          <template #icon>
-            <PhPaperPlaneTilt />
-          </template>
-          send
-        </AppButton>
-      </template>
-    </AppFormModel>
-  </div>
-  <div v-else class="flex justify-end">
-    <div>
-      <AppButton @click="toggleAsking">
+    <div class="flex gap-2">
+      <AppCopyPaste text="some" />
+      <AppButton
+        v-if="hasCloseRoomButton"
+        type="danger"
+        @click="handleCloseRoom"
+      >
         <template #icon>
-          <PhPencilSimpleLine />
+          <PhXCircle />
         </template>
-        ask a question
+        close room
       </AppButton>
     </div>
-  </div>
+  </header>
+  <template v-if="!state.room.isInactive">
+    <div
+      v-if="state.isAsking"
+      class="flex p-4 border-2 border-brand-primary-500 bg-white rounded"
+    >
+      <AppFormModel fileds-placement="vertical" @submit.prevent="handleSend">
+        <AppInput
+          v-model="state.question.title"
+          label="title"
+          placeholder="be clear and concise"
+        />
+        <AppInputText
+          v-model="state.question.content"
+          label="content"
+          placeholder="what do you want to ask?"
+          height="8rem"
+        />
+        <template #footer>
+          <AppButton type="clear" @click="handleToggleAsking">
+            <template #icon>
+              <PhX />
+            </template>
+            close
+          </AppButton>
+          <AppButton :disabled="isSendDisabled">
+            <template #icon>
+              <PhPaperPlaneTilt />
+            </template>
+            send
+          </AppButton>
+        </template>
+      </AppFormModel>
+    </div>
+    <div v-else class="flex justify-end">
+      <div>
+        <AppButton @click="handleToggleAsking">
+          <template #icon>
+            <PhPencilSimpleLine />
+          </template>
+          ask a question
+        </AppButton>
+      </div>
+    </div>
+  </template>
+  <template v-else>
+    <AppAlert title="This room is closed">
+      This room was closed by its creator. Therefore, it is no longer possible
+      to register questions here.
+    </AppAlert>
+  </template>
   <div class="flex">
     <div v-if="!hasQuestions" class="flex-1 flex flex-col items-center py-8">
       <img
@@ -182,8 +224,10 @@ onMounted(() => {
         class="w-72"
       />
       <p class="mt-4 font-primary text-xl text-slate-600 text-center">
-        hmm, looks like there's nothing here... Be the first to submit a
-        question
+        hmm, looks like there's nothing here...
+        <span v-if="!state.room.isInactive">
+          Be the first to submit a question
+        </span>
       </p>
     </div>
     <div v-else class="flex-1 flex flex-col gap-4 py-4">

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
-import AppContainer from './components/AppContainer/index.vue'
-import AppAvatar from './components/AppAvatar/index.vue'
+import AppContainer from '@/components/AppContainer/index.vue'
+import AppAvatar from '@/components/AppAvatar/index.vue'
+import AppModal from '@/components/AppModal/index.vue'
 
 const user = useUserStore()
 </script>
 
 <template>
+  <AppModal />
   <div class="w-full min-h-screen bg-slate-50">
     <header
       class="flex justify-between items-center px-16 h-14 border-b-[1px] border-slate-300"
