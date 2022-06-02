@@ -6,6 +6,7 @@ import {
   onChildAdded,
   push as _push,
   ref as _ref,
+  update as _update,
   type DatabaseReference,
   type ThenableReference,
   type Unsubscribe
@@ -20,6 +21,7 @@ type DatabaseHook = {
   get: (path?: string[]) => Promise<DataSnapshot>
   push: (value: any, path?: string[]) => ThenableReference
   added: (callback: (data: DataSnapshot) => void, path: string[]) => Unsubscribe
+  update: (value: any, path?: string[]) => Promise<void>
 }
 
 export default function useDatabase(
@@ -46,10 +48,16 @@ export default function useDatabase(
     return onChildAdded(reference, callback)
   }
 
+  function update(value: any, path: string[] = []) {
+    const reference = path.length ? ref(join(path)) : rootReference
+    return _update(reference, value)
+  }
+
   return {
     ref,
     get,
     push,
-    added
+    added,
+    update
   }
 }
