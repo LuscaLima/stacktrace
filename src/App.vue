@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { refresh } from '@/composables/login'
 import AppContainer from '@/components/AppContainer/index.vue'
 import AppAvatar from '@/components/AppAvatar/index.vue'
 import AppModal from '@/components/AppModal/index.vue'
 
 const user = useUserStore()
+
+onMounted(() => {
+  refresh(user.setUserData)
+})
 </script>
 
 <template>

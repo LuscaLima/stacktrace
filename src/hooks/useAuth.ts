@@ -1,26 +1,32 @@
 import { auth, GoogleAuthProvider, signInWithPopup } from '@/services/firebase'
-import type { User } from 'firebase/auth'
+import { onAuthStateChanged, type User } from 'firebase/auth'
 
 const provider = new GoogleAuthProvider()
 
 type AuthHook = {
   login: () => Promise<User>
+  refresh: (callback: Function) => void
 }
 
 export default function useAuth(): AuthHook {
-  function login(): Promise<User> {
-    return new Promise(async (resolve, reject) => {
-      const result = await signInWithPopup(auth, provider)
+  async function login(): Promise<User> {
+    const result = await signInWithPopup(auth, provider)
 
-      if (result.user) {
-        resolve(result.user)
-      }
+    return result.user
+  }
 
-      reject()
+  onAuthStateChanged
+
+  function refresh(callback: Function) {
+    const unsubscribe = onAuthStateChanged(auth, userData => {
+      callback(userData)
     })
+
+    unsubscribe()
   }
 
   return {
-    login
+    login,
+    refresh
   }
 }

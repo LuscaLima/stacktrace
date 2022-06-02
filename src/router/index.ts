@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import { useUserStore } from '@/stores/user'
-// import { refreshUser } from '@/composables/login'
 
 // Views
 import Home from '@/views/Home/index.vue'
@@ -36,17 +34,5 @@ const router = createRouter({
     }
   ]
 })
-
-// router.beforeEach((to, from, next) => {
-//   if (!from.name && to.meta.auth) {
-//     const user = refreshUser(useUserStore)
-
-//     if (!user) {
-//       next({ name: 'home' })
-//     }
-//   } else {
-//     next()
-//   }
-// })
 
 export default router
