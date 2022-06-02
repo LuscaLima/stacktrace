@@ -24,10 +24,10 @@ const formatedCode = computed(() => props.code.replace('-', '#'))
 
 <template>
   <div
-    class="flex-1 p-4 rounded border-2 border-white bg-white cursor-pointer transition-all duration-200"
+    class="flex-1 p-4 rounded border-2 bg-white cursor-pointer transition-all duration-200"
     :class="{
-      'border-brand-primary-500 ': isSelected,
-      'hover:border-brand-danger-500': !isSelected
+      'border-brand-primary-500': isSelected,
+      'border-white hover:border-brand-danger-500': !isSelected
     }"
   >
     <header class="flex flex-wrap">
