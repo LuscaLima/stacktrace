@@ -4,7 +4,7 @@ type sizePropOptions = 'small' | 'medium'
 withDefaults(
   defineProps<{
     url?: string | null
-    size: sizePropOptions
+    size?: sizePropOptions
   }>(),
   { size: 'medium' }
 )
