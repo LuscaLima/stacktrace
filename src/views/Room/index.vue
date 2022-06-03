@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { database } from '@/services/firebase'
-import { useDatabase, useModal } from '@/hooks'
+import { useDatabase, useModal, useToast } from '@/hooks'
 import { useUserStore } from '@/stores/user'
 import {
   PhList,
@@ -36,6 +36,7 @@ const room = useDatabase(database, `rooms/${route.params.id}`)
 const questions = useDatabase(database, 'questions')
 const user = useUserStore()
 const modal = useModal()
+const toast = useToast()
 const state = reactive({
   room: {} as Room,
   questions: {} as Question,
@@ -46,6 +47,7 @@ const state = reactive({
   }
 })
 
+const urlRoomCode = computed(() => `${location.host}/room/${route.params.id}`)
 const isSendDisabled = computed(
   () => !state.question.title || !state.question.content
 )
@@ -54,6 +56,10 @@ const hasQuestions = computed(() => !!quantityOfQuestions.value)
 const hasCloseRoomButton = computed(
   () => state.room.authorId === user.uid && !state.room.isInactive
 )
+
+function handleCopyUrlRoomCode() {
+  toast.dispatch({ type: 'success', message: 'code copied successfully' })
+}
 
 function handleCloseRoom() {
   modal.open({
@@ -153,7 +159,11 @@ onMounted(() => {
       <p class="text-lg">{{ state.room.description }}</p>
     </div>
     <div class="flex gap-2">
-      <AppCopyPaste text="some" />
+      <AppCopyPaste
+        :copy-text="urlRoomCode"
+        :alias="String(route.params.id)"
+        @copy="handleCopyUrlRoomCode"
+      />
       <AppButton
         v-if="hasCloseRoomButton"
         type="danger"
