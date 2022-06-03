@@ -158,7 +158,7 @@ onMounted(() => {
       </div>
       <p class="text-lg">{{ state.room.description }}</p>
     </div>
-    <div class="flex gap-2">
+    <div class="flex flex-col gap-2">
       <AppCopyPaste
         :copy-text="urlRoomCode"
         :alias="String(route.params.id)"

@@ -18,7 +18,7 @@ function handleCopy() {
 
 <template>
   <div
-    class="inline-flex justify-between items-center w-fit px-3 py-2 border-[1px] border-slate-300 rounded bg-white"
+    class="inline-flex justify-between items-center grow-0 w-fit px-3 py-[calc(0.5rem-1px)] border-[1px] border-slate-300 rounded bg-white"
   >
     <strong class="font-semibold mr-2 text-slate-700">
       {{ alias || copyText }}
