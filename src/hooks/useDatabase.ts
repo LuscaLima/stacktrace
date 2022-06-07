@@ -6,6 +6,7 @@ import {
   onChildAdded,
   push as _push,
   ref as _ref,
+  remove as _remove,
   runTransaction,
   TransactionResult,
   update as _update,
@@ -28,6 +29,7 @@ type DatabaseHook = {
   push: (value: any, path?: string[]) => ThenableReference
   added: (callback: (data: DataSnapshot) => void, path: string[]) => Unsubscribe
   update: (value: any, path?: string[]) => Promise<void>
+  remove: (path?: string[]) => Promise<void>
 }
 
 export default function useDatabase(
@@ -64,12 +66,17 @@ export default function useDatabase(
     return _update(pathReference(path), value)
   }
 
+  function remove(path: string[] = ['/']) {
+    return _remove(pathReference(path))
+  }
+
   return {
     ref,
     get,
     transaction,
     push,
     added,
-    update
+    update,
+    remove
   }
 }
