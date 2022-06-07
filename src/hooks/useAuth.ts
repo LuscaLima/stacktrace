@@ -15,8 +15,6 @@ export default function useAuth(): AuthHook {
     return result.user
   }
 
-  onAuthStateChanged
-
   function refresh(callback: Function) {
     const unsubscribe = onAuthStateChanged(auth, userData => {
       callback(userData)
