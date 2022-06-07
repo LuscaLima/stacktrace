@@ -22,6 +22,7 @@ import AppButton from '@/components/AppButton/index.vue'
 import AppTag from '@/components/AppTag/index.vue'
 import AppAlert from '@/components/AppAlert/index.vue'
 import AppQuestion, { type Question } from '@/components/AppQuestion/index.vue'
+import router from '@/router'
 
 type Room = {
   authorId: string
@@ -92,11 +93,14 @@ async function handleSend() {
 
   const newQuestion = {
     author: {
+      uid: user.uid,
       name: user.name,
       photoURL: user.photoURL
     },
     title: state.question.title,
     content: state.question.content,
+    likes: {},
+    likesCount: 0,
     isHighlighted: false,
     isAnswered: false,
     createdAt: Date.now(),
@@ -111,6 +115,50 @@ async function handleSend() {
 function resetQuestion() {
   state.question.title = ''
   state.question.content = ''
+}
+
+function handleQuestionClick(questionId: string) {
+  router.push({
+    name: 'question',
+    params: {
+      roomId: route.params.id,
+      questionId
+    }
+  })
+}
+
+async function handleQuestionLike(questionId: string) {
+  if (!user.hasUser) {
+    await login(user.setUserData)
+  }
+
+  const userId = user.uid as string
+
+  questions
+    .transaction(
+      question => {
+        if (question) {
+          if (question.likes && question.likes[userId]) {
+            question.likesCount--
+            question.likes[userId] = null
+          } else {
+            question.likesCount++
+
+            if (!question.likes) {
+              question.likes = {}
+            }
+
+            question.likes[userId] = true
+          }
+        }
+
+        return question
+      },
+      [String(route.params.id), questionId]
+    )
+    .then(question => {
+      state.questions[questionId] = question.snapshot.val()
+    })
 }
 
 function getRoomInfos() {
@@ -245,7 +293,13 @@ onMounted(() => {
         <PhList />
         <h3 class="text-slate-700">questions in this room</h3>
       </div>
-      <AppQuestion v-for="question in state.questions" v-bind="question" />
+      <AppQuestion
+        v-for="(question, id) in state.questions"
+        :key="id"
+        v-bind="question"
+        @go="() => handleQuestionClick(id)"
+        @like="() => handleQuestionLike(id)"
+      />
     </div>
   </div>
 </template>

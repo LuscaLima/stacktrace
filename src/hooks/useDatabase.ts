@@ -6,6 +6,8 @@ import {
   onChildAdded,
   push as _push,
   ref as _ref,
+  runTransaction,
+  TransactionResult,
   update as _update,
   type DatabaseReference,
   type ThenableReference,
@@ -19,6 +21,10 @@ function join(path: string[]) {
 type DatabaseHook = {
   ref: (path: string) => DatabaseReference
   get: (path?: string[]) => Promise<DataSnapshot>
+  transaction: (
+    callback: (data: any) => unknown,
+    path: string[]
+  ) => Promise<TransactionResult>
   push: (value: any, path?: string[]) => ThenableReference
   added: (callback: (data: DataSnapshot) => void, path: string[]) => Unsubscribe
   update: (value: any, path?: string[]) => Promise<void>
@@ -30,6 +36,10 @@ export default function useDatabase(
 ): DatabaseHook {
   const rootReference = ref()
 
+  function pathReference(path: string[] = []) {
+    return path.length ? ref(join(path)) : rootReference
+  }
+
   function ref(...path: string[]) {
     return _ref(database, join([document, ...path]))
   }
@@ -38,24 +48,26 @@ export default function useDatabase(
     return _get(child(rootReference, join(path)))
   }
 
+  function transaction(callback: (data: any) => unknown, path: string[] = []) {
+    return runTransaction(pathReference(path), callback)
+  }
+
   function push(value: any, path: string[] = []) {
-    const reference = path.length ? ref(join(path)) : rootReference
-    return _push(reference, value)
+    return _push(pathReference(path), value)
   }
 
   function added(callback: (data: DataSnapshot) => void, path: string[]) {
-    const reference = path.length ? ref(join(path)) : rootReference
-    return onChildAdded(reference, callback)
+    return onChildAdded(pathReference(path), callback)
   }
 
   function update(value: any, path: string[] = []) {
-    const reference = path.length ? ref(join(path)) : rootReference
-    return _update(reference, value)
+    return _update(pathReference(path), value)
   }
 
   return {
     ref,
     get,
+    transaction,
     push,
     added,
     update
