@@ -18,11 +18,13 @@ export type QuestionData = {
   isAnswered: boolean
   isHighlighted: boolean
   updatedAt: number
+  canRemove?: boolean
 }
 
 defineEmits<{
   (e: 'like'): void
   (e: 'go'): void
+  (e: 'delete'): void
 }>()
 const props = defineProps<QuestionData>()
 
@@ -61,7 +63,7 @@ const likeWeight = computed(() =>
         <span @click="$emit('like')">
           <PhThumbsUp :weight="likeWeight" class="text-brand-warn-500" />
         </span>
-        <span>
+        <span v-if="canRemove" @click="$emit('delete')">
           <PhTrash class="text-brand-danger-500" />
         </span>
       </div>

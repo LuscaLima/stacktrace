@@ -57,6 +57,7 @@ const hasQuestions = computed(() => !!quantityOfQuestions.value)
 const hasCloseRoomButton = computed(
   () => state.room.authorId === user.uid && !state.room.isInactive
 )
+const canRemoveQuestion = computed(() => state.room.authorId === user.uid)
 
 function handleCopyUrlRoomCode() {
   toast.dispatch({ type: 'success', message: 'code copied successfully' })
@@ -159,6 +160,24 @@ async function handleQuestionLike(questionId: string) {
     .then(question => {
       state.questions[questionId] = question.snapshot.val()
     })
+}
+
+function handleDeleteQuestion(questionId: string) {
+  const roomId = String(route.params.id)
+
+  modal.open({
+    type: 'warn',
+    title: 'Delete question',
+    content:
+      'Do you really want to delete this question? This action cannot be undone',
+    okText: 'Delete',
+    okHandler: () => {
+      questions.remove([roomId, questionId]).then(() => {
+        Reflect.deleteProperty(state.questions, questionId)
+        modal.close()
+      })
+    }
+  })
 }
 
 function getRoomInfos() {
@@ -297,8 +316,10 @@ onMounted(() => {
         v-for="(question, id) in state.questions"
         :key="id"
         v-bind="question"
+        :can-remove="canRemoveQuestion"
         @go="() => handleQuestionClick(id)"
         @like="() => handleQuestionLike(id)"
+        @delete="() => handleDeleteQuestion(id)"
       />
     </div>
   </div>
