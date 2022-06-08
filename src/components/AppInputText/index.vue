@@ -17,7 +17,7 @@ defineEmits<{
     <div v-if="label" class="text-slate-500">
       <label
         class="inline-block after:content-[':']"
-        @click="$refs.inputText.focus"
+        @click="() => ($refs.inputText as HTMLTextAreaElement).focus"
       >
         {{ label }}
       </label>
@@ -29,7 +29,7 @@ defineEmits<{
       class="inline-flex w-full px-3 py-2 border-[1px] text-slate-700 border-slate-300 rounded bg-white outline-0 resize-none placeholder:text-slate-300 focus:border-brand-primary-500 transition-all duration-200"
       v-bind="$attrs"
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
     ></textarea>
   </div>
 </template>

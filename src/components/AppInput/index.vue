@@ -9,6 +9,10 @@ withDefaults(
 defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
+
+interface EventValue {
+  value: string
+}
 </script>
 
 <template>
@@ -16,9 +20,10 @@ defineEmits<{
     <div v-if="label" class="text-slate-500">
       <label
         class="inline-block after:content-[':']"
-        @click="$refs.input.focus"
-        >{{ label }}</label
+        @click="() => ($refs.input as HTMLInputElement).focus"
       >
+        {{ label }}
+      </label>
     </div>
     <input
       ref="input"
@@ -26,7 +31,7 @@ defineEmits<{
       class="inline-flex w-full px-3 py-2 border-[1px] text-slate-700 border-slate-300 rounded bg-white outline-0 placeholder:text-slate-300 focus:border-brand-primary-500 transition-all duration-200"
       v-bind="$attrs"
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
   </div>
 </template>
